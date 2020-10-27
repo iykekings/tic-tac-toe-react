@@ -7,23 +7,32 @@ import Game from './components/Game';
 import { genWinState } from './util';
 
 function App() {
+  const [board, setBoard] = useState<Array<'X' | 'O' | ''>>([]);
+  const [N, setN] = useState('');
+  const [turn, setTurn] = useState<'X' | 'O'>('X');
+  const [winner, setWinner] = useState<'X' | 'O' | ''>('');
+  const [over, setOver] = useState(false);
+  const [winningLine, setWinningLine] = useState<number[]>([]);
+  const [winState, setWinState] = useState<number[][]>([]);
+
   function handleclick(i: number) {
-    setBoard((pre) => {
-      pre[i] = pre[i] ? pre[i] : turn;
-      return pre;
-    });
-    setTurn((pre) => {
-      check(pre);
-      return pre === 'X' ? 'O' : 'X';
-    });
+    if (!board[i]) {
+      setBoard((pre) => {
+        pre[i] = turn;
+        check(turn, pre);
+        return pre;
+      });
+      setTurn((pre) => (pre === 'X' ? 'O' : 'X'));
+    }
   }
+
   function start() {
     const len = parseInt(N);
     setBoard(Array(len ** 2).fill(''));
     setWinState([...genWinState(len)].flat(1));
   }
 
-  function same(inp: number[]) {
+  function same(inp: number[], board: Array<'X' | 'O' | ''>) {
     return inp.every((item) => board[item] && board[item] === board[inp[0]]);
   }
 
@@ -32,16 +41,14 @@ function App() {
     setTurn('X');
   }
 
-  function check(p: 'X' | 'O') {
-    const winLines = winState.filter(same);
-    console.log({ p });
+  function check(p: 'X' | 'O', board: Array<'X' | 'O' | ''>) {
+    const winLines = winState.filter((s) => same(s, board));
     if (winLines.length) {
       setWinningLine(winLines[0]);
-      console.log(winLines);
-      // setTimeout(() => {
-      setWinner(p);
-      gameOver();
-      // }, 1000);
+      setTimeout(() => {
+        setWinner(p);
+        gameOver();
+      }, 1000);
       return;
     }
 
@@ -62,13 +69,6 @@ function App() {
     }
   }
 
-  const [N, setN] = useState('');
-  const [turn, setTurn] = useState<'X' | 'O'>('X');
-  const [winner, setWinner] = useState<'X' | 'O' | ''>('');
-  const [over, setOver] = useState(false);
-  const [winningLine, setWinningLine] = useState<number[]>([]);
-  const [board, setBoard] = useState<Array<'X' | 'O' | ''>>([]);
-  const [winState, setWinState] = useState<number[][]>([]);
   return (
     <main className="app">
       {over && <Announcer player={winner} restart={() => restart(false)} />}
