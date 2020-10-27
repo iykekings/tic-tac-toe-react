@@ -1,0 +1,44 @@
+.game-board {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  position: relative;
+  .cell {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    align-items: center;
+    font-weight: bolder;
+    border: 1px #8080802b solid;
+    cursor: pointer;
+    &.top {
+      border-top: none;
+    }
+    &.bottom {
+      border-bottom: none;
+    }
+    &.left {
+      border-left: none;
+    }
+    &.right {
+      border-right: none;
+    }
+    &.X {
+      color: #009688;
+    }
+    &.O {
+      color: #ff9800;
+    }
+    &.winner {
+      background-color: ghostwhite;
+      border: 1px #15f5156e solid;
+      animation: winner infinite linear 1s;
+    }
+  }
+}
+
+@keyframes winner {
+  to {
+    filter: opacity(0);
+  }
+}
